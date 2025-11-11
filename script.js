@@ -5,7 +5,6 @@ let checkBtn = document.getElementById("check");
 let messageEl = document.getElementById("message");
 let inputs = document.querySelectorAll("#board input");
 
-
 let board = [];
 for (let i = 0; i < 9; i++) {
   const row = [];
@@ -22,12 +21,9 @@ function buildBoard() {
 
   // create 81 cell
   for (let r = 0; r < 9; r++) {
-    // let cell = document.createElement("div");
-    // cell.className = "cell2";
     for (let c = 0; c < 9; c++) {
       let idx = r * 9 + c; // to get the index in the flatten array
-      // console.log(idx);
-
+    
       let input = document.createElement("input");
       input.type = "text";
       input.maxLength = 1;
@@ -39,13 +35,57 @@ function buildBoard() {
       if (board[r][c] !== 0) {
         input.value = board[r][c];
         input.disabled = true; // prefilled numbers not editable
-        input.readOnly = true; 
+        input.readOnly = true;
         input.classList.add("readonly");
-        input.style.backgroundColor = "#eee";
+        input.style.backgroundColor = "#c9bebeff";
       }
+
+      input.addEventListener("keydown", arrowDropdown);
 
       boardEl.appendChild(input);
     }
+  }
+}
+
+// keyBoard arrow dropdown
+function arrowDropdown(e) {
+  let input = e.target;
+  let row = Number(input.dataset.r);
+  let col = Number(input.dataset.c);
+  console.log(col);
+  let nextRow = row;
+  let nextCol = col;
+
+  switch (e.key) {
+    case "ArrowUp": {
+      nextRow = row > 0 ? row - 1 : row;
+      break;
+    }
+    case "ArrowDown": {
+      nextRow = row < 8 ? row + 1 : row;
+      break;
+    }
+    case "ArrowLeft": {
+      nextCol = col > 0 ? col - 1 : col;
+      break;
+    }
+    case "ArrowRight": {
+      nextCol = col < 8 ? col + 1 : col;
+      break;
+    }
+    default: {
+      return;
+    }
+  }
+
+  let nextInput = document.querySelector(
+    `input[data-r ="${nextRow}"][data-c = "${nextCol}"]`
+  );
+
+  if (nextInput) {
+    e.preventDefault();
+    input.disabled = false;
+    nextInput.focus();
   }
 }
 
@@ -127,7 +167,7 @@ newGameBtn.addEventListener("click", newgame);
 
 // get input value
 function getUserBoard() {
-   let inputs = document.querySelectorAll("#board input");
+  let inputs = document.querySelectorAll("#board input");
   const userBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
 
   inputs.forEach((input) => {
@@ -184,18 +224,18 @@ function isSafeForCheck(board, row, col, num) {
   return true;
 }
 
- // to check output
+// to check output
 checkBtn.addEventListener("click", checkSolution);
 
-resetBtn.addEventListener("click" ,() =>{
+resetBtn.addEventListener("click", () => {
   let inputs = document.querySelectorAll("#board input");
-  inputs.forEach((input) =>{
-     // Only clear if it's NOT a predefined (readonly) cell
+  inputs.forEach((input) => {
+    // Only clear if it's NOT a predefined (readonly) cell
     if (!input.readOnly) {
       input.value = "";
     }
-  })
-})
+  });
+});
 
 fillBoard();
 makePuzzle();

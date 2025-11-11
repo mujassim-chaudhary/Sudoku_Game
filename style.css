@@ -1,21 +1,86 @@
-/* input{
-    width: 40px;
-    padding: 10px;
-} */
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: linear-gradient(145deg, #3d7fea, #1f85b4);
+  /* height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+   
+}
+
+h1{
+  color: aqua;
+  margin-top: 20px;
+  font-size: 40px;
+}
+
+#message{
+  margin-top: -20px;
+  font-size: 30px;
+}
+
+input {
+  /* width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px; */
+  border: 1px solid #888;
+  text-align: center;
+  font-size: 18px;
+  /* outline: none; */
+}
 
 .sudoku-board {
   display: grid;
-  grid-template-columns: repeat(9, 50px);
-  grid-template-rows: repeat(9, 50px);
+  grid-template-columns: repeat(9, 47px);
+  grid-template-rows: repeat(9, 47px);
   /* gap: 2px; */
   justify-content: center;
   margin: 0 auto;
 }
 
-/* .sudoku-board input:nth-child(3n) {
-  border-right: 2px solid black;
-} */
-
-#new{
-  color: pink;
+/* Add thicker borders every 3 rows */
+input[data-r="3"], input[data-r="6"] {
+  border-top: 4px solid #000000;
 }
+
+/* Add thicker borders every 3 columns */
+input[data-c="3"], input[data-c="6"] {
+  border-left: 4px solid #000000;
+}
+
+#btn-container{
+  position: relative;
+  bottom: 230px;
+  left: 430px;
+  display: flex;
+  gap: 20px;
+}
+
+button {
+  background: linear-gradient(135deg, #bce03a, #00f2fe);
+  border: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: linear-gradient(135deg, #43e97b, #bf27b2);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+
+
