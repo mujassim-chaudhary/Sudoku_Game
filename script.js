@@ -4,9 +4,14 @@ let resetBtn = document.getElementById("reset");
 let checkBtn = document.getElementById("check");
 let messageEl = document.getElementById("message");
 let inputs = document.querySelectorAll("#board input");
+let easyBtn = document.getElementById("easy");
+let mediumBtn = document.getElementById("medium");
+let hardbtn = document.getElementById("hard");
+let giveUpbtn = document.getElementById("giveUp-btn");
 
 let board = [];
 for (let i = 0; i < 9; i++) {
+  // to create a 2D Array
   const row = [];
   for (let j = 0; j < 9; j++) {
     row.push(0);
@@ -23,21 +28,22 @@ function buildBoard() {
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       let idx = r * 9 + c; // to get the index in the flatten array
-    
+
       let input = document.createElement("input");
       input.type = "text";
       input.maxLength = 1;
       input.dataset.r = r;
       input.dataset.c = c;
-      input.inputMode = "numeric";
+      input.inputMode = "numeric"; // to open a numeric pad in mobile
       input.autocomplete = "off";
+      input.style.background = "#b2e999ff";
 
       if (board[r][c] !== 0) {
         input.value = board[r][c];
-        input.disabled = true; // prefilled numbers not editable
+       // input.disabled = true; // prefilled numbers not editable
         input.readOnly = true;
         input.classList.add("readonly");
-        input.style.backgroundColor = "#c9bebeff";
+        input.style.backgroundColor = "#de7373ff";
       }
 
       input.addEventListener("keydown", arrowDropdown);
@@ -79,12 +85,13 @@ function arrowDropdown(e) {
   }
 
   let nextInput = document.querySelector(
+    // To select the
     `input[data-r ="${nextRow}"][data-c = "${nextCol}"]`
   );
 
   if (nextInput) {
     e.preventDefault();
-    input.disabled = false;
+    // input.disabled = false;
     nextInput.focus();
   }
 }
@@ -156,11 +163,46 @@ function makePuzzle(emptyCells = 40) {
   return board;
 }
 
+console.log(easyBtn.addEventListener("click", easyLevel));
+// To select the level of the sudoku game
+function easyLevel() {
+  buildBoard();
+  fillBoard();
+  makePuzzle(30);
+  buildBoard();
+  // fillBoard();
+}
+
+
+
+function mediumLevel() {
+  buildBoard();
+  fillBoard();
+
+  makePuzzle(45);
+  buildBoard();
+  // fillBoard();
+}
+
+mediumBtn.addEventListener("click", mediumLevel);
+
+function hardLevel() {
+  buildBoard();
+  fillBoard();
+  makePuzzle(60);
+  buildBoard();
+  // fillBoard();
+}
+
+hardbtn.addEventListener("click", hardLevel);
+
 function newgame() {
   buildBoard();
   fillBoard();
-  makePuzzle();
+  makePuzzle(40);
   messageEl.textContent = "";
+  buildBoard();
+  // fillBoard();
 }
 
 newGameBtn.addEventListener("click", newgame);
@@ -174,31 +216,32 @@ function getUserBoard() {
     const r = Number(input.dataset.r);
     const c = Number(input.dataset.c);
     const val = input.value;
-    console.log(`r=${r}, c=${c}, val=${val}`);
+    // console.log(`r=${r}, c=${c}, val=${val}`);
 
     userBoard[r][c] = val ? Number(val) : 0;
   });
 
-  console.log(userBoard);
+  // console.log(userBoard);
   return userBoard;
 }
 
 function checkSolution() {
   let userBoard = getUserBoard();
-  console.log(userBoard);
   //console.log(userBoard);
   for (let r = 0; r < 9; r++) {
     for (let c = 0; c < 9; c++) {
       let num = userBoard[r][c];
       if (num === 0 || !isSafeForCheck(userBoard, r, c, num)) {
-        messageEl.textContent = "❌ Incorrect or Incomplete!";
-        messageEl.style.color = "red";
+        // messageEl.textContent = "❌ Incorrect or Incomplete!";
+        // messageEl.style.color = "red";
+        showAlert("❌ Incorrect or Incomplete!");
         return;
       }
     }
   }
-  messageEl.textContent = "✅ Congratulations! Sudoku Solved!";
-  messageEl.style.color = "green";
+  // messageEl.textContent = "✅ Congratulations! Sudoku Solved!";
+  // messageEl.style.color = "green";
+  showAlert("✅ Congratulations! Sudoku Solved!");
 }
 
 // A version of isSafe that works for full user board checking
@@ -237,6 +280,53 @@ resetBtn.addEventListener("click", () => {
   });
 });
 
+// custom alert pop
+function showAlert(message) {
+  let alertBox = document.getElementById("custom-alert");
+  let alertMessage = document.getElementById("alert-message");
+
+  alertMessage.textContent = message;
+  alertMessage.style.color = "red";
+  console.log(alertMessage);
+  alertBox.style.display = "block";
+
+  let okBtn = document.getElementById("alert-btn");
+  okBtn.addEventListener("click", function () {
+    alertBox.style.display = "none";
+    // buildBoard();
+    // fillBoard();
+    // // makePuzzle(0);
+    // buildBoard();
+  });
+}
+
+function showGiveUpAlert(message) {
+  let alertBox = document.getElementById("custom-alert1");
+  let alertMessage = document.getElementById("alert-message1");
+
+  alertMessage.textContent = message;
+  alertMessage.style.color = "red";
+  console.log(alertMessage);
+  alertBox.style.display = "block";
+
+  let okBtn = document.getElementById("alert-btn1");
+  okBtn.addEventListener("click", function () {
+    alertBox.style.display = "none";
+    buildBoard();
+    fillBoard();
+    makePuzzle(0);
+    buildBoard();
+  });
+}  
+
+ // give Functionality
+function giveUp() {
+  showGiveUpAlert("give up!");
+}
+
+giveUpbtn.addEventListener("click", giveUp);
+
+buildBoard();
 fillBoard();
 makePuzzle();
 buildBoard();

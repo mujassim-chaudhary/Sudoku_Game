@@ -2,21 +2,20 @@ body {
   font-family: Arial, sans-serif;
   text-align: center;
   background: linear-gradient(145deg, #3d7fea, #1f85b4);
-  /* height: 100vh; */
+  height: 96vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-   
 }
 
-h1{
+h1 {
   color: aqua;
-  margin-top: 20px;
+  margin-top: 50px;
   font-size: 40px;
 }
 
-#message{
+#message {
   margin-top: -20px;
   font-size: 30px;
 }
@@ -42,16 +41,18 @@ input {
 }
 
 /* Add thicker borders every 3 rows */
-input[data-r="3"], input[data-r="6"] {
+input[data-r="3"],
+input[data-r="6"] {
   border-top: 4px solid #000000;
 }
 
 /* Add thicker borders every 3 columns */
-input[data-c="3"], input[data-c="6"] {
+input[data-c="3"],
+input[data-c="6"] {
   border-left: 4px solid #000000;
 }
 
-#btn-container{
+#btn-container {
   position: relative;
   bottom: 230px;
   left: 430px;
@@ -82,5 +83,80 @@ button:active {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
 }
 
+#level {
+  position: relative;
+  bottom: 340px;
+  right: 430px;
+  display: flex;
+  gap: 28px;
+}
 
+h3 {
+  position: relative;
+  bottom: 350px;
+  right: 430px;
+  color: rgb(240, 230, 41);
+}
 
+#custom-alert {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+  animation: popup 0.3s ease;
+}
+
+#alert-btn {
+  background-color: white;
+  color: #007bff;
+  border: none;
+  padding: 8px 16px;
+  margin-top: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#alert-btn:hover {
+  background-color: #e0e0e0;
+}
+
+#custom-alert1 {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 1000;
+  animation: popup 0.3s ease;
+}
+
+#giveUp-btn{
+  position: relative;
+  bottom: 100px;
+  background: linear-gradient(135deg, #dd2a2a, #ebee22);
+}
+
+#giveUp-btn:hover {
+  background: linear-gradient(135deg, #e61313, #27a8bf);
+  transform: translateY(-2px);
+}
+
+#giveUp-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}
