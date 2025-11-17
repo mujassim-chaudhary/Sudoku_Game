@@ -8,6 +8,8 @@ let easyBtn = document.getElementById("easy");
 let mediumBtn = document.getElementById("medium");
 let hardbtn = document.getElementById("hard");
 let giveUpbtn = document.getElementById("giveUp-btn");
+let boxStep = document.getElementById("list");
+let divTag = document.getElementById("box");
 
 let board = [];
 for (let i = 0; i < 9; i++) {
@@ -18,8 +20,114 @@ for (let i = 0; i < 9; i++) {
   }
   board.push(row);
 }
+// to create 2D array for user input board
+let userBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
+let loadBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
+//let savedBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
 
-// console.log(board);
+let i = 0;
+
+
+// to save the current user board value in the  local storage
+function saveProgress(e) {
+  let row = Number(e.target.dataset.r);
+  let col = Number(e.target.dataset.c);
+  let val = Number(e.target.value);
+  i++; 
+  
+  // to load the old data or to create the empty array
+  let steps = JSON.parse(localStorage.getItem("steps")) || [];
+
+  function addStep(i, val) {
+
+    if(val === 0){
+       // remove last p tag from div
+       if(divTag.lastElementChild){
+        divTag.removeChild(divTag.lastElementChild);
+       }
+       
+       // remove last element from steps array
+       steps.pop();;
+
+       // update the local storage
+       localStorage.setItem("steps",JSON.stringify(steps));
+       return;
+    }
+
+    let pTag = document.createElement("p");
+    let stepText = "Step" + i + " = " + val;
+
+    pTag.textContent = stepText;
+    divTag.appendChild(pTag);
+
+    steps.push(stepText);
+    localStorage.setItem("steps", JSON.stringify(steps));
+}
+
+addStep(i,val);
+
+
+  loadBoard[row][col] = val ? val : 0;
+
+  localStorage.setItem("sudoku-progress", JSON.stringify(loadBoard));
+}
+
+// to persist the preFilled sudoku value
+function savePuzzle() {
+  localStorage.setItem("sudoku-puzzle", JSON.stringify(board));
+}
+
+window.addEventListener("load", () => {
+  const savedPuzzle = localStorage.getItem("sudoku-puzzle");
+  const savedProgress = localStorage.getItem("sudoku-progress");
+  const savedSteps = localStorage.getItem("steps");
+
+  if (savedPuzzle) {
+    board = JSON.parse(savedPuzzle);
+    console.log("🟢 Restored puzzle:", board);
+  } else {
+    console.log("⚠️ No saved puzzle found.");
+  }
+
+  if (savedProgress) {
+    loadBoard = JSON.parse(savedProgress);
+    console.log("🟢 Restored progress:", loadBoard);
+  } else {
+    console.log("⚠️ No saved progress found.");
+  }
+
+  if(savedSteps){
+    let loadSteps = JSON.parse(savedSteps);
+
+    loadSteps.forEach(stepText => {
+        let p = document.createElement("p");
+        p.textContent = stepText;
+        divTag.appendChild(p);
+    });
+
+    console.log("🟢 Restored Steps:",loadSteps);
+  } else{
+    console.log("⚠️ No saved Steps found.");
+  }
+
+  buildBoard();
+});
+
+
+// delete or clear the saved progress from local storage;
+function clearProgress() {
+  localStorage.removeItem("sudoku-progress");
+} 
+
+// delete or clear the saved saved puzzle from local storage
+function clearSavedPuzzle(){
+  localStorage.removeItem("sudoku-puzzle");
+}
+
+// delete or clear the saved steps from local storage
+function clearSteps(){
+  localStorage.removeItem("steps");
+}
 
 function buildBoard() {
   boardEl.innerHTML = "";
@@ -40,13 +148,24 @@ function buildBoard() {
 
       if (board[r][c] !== 0) {
         input.value = board[r][c];
-       // input.disabled = true; // prefilled numbers not editable
+        // input.disabled = true; // prefilled numbers not editable
         input.readOnly = true;
         input.classList.add("readonly");
         input.style.backgroundColor = "#de7373ff";
       }
 
+      // to restore the saved input value if avaliable
+      if (loadBoard[r][c] !== 0) {
+        input.value = loadBoard[r][c];
+        input.readOnly = false;
+        input.classList.remove("readOnly");
+        input.style.background = "#b2e999ff";
+      }
+
       input.addEventListener("keydown", arrowDropdown);
+
+      // To store the input value in the local storage
+      input.addEventListener("input", saveProgress);
 
       boardEl.appendChild(input);
     }
@@ -120,7 +239,12 @@ function isSafe(row, col, num) {
   return true;
 }
 
+let stopFunction = false;
+
 function fillBoard() {
+  // if(stopFunction){
+  //   return;
+  // }
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
       if (board[row][col] === 0) {
@@ -166,51 +290,56 @@ function makePuzzle(emptyCells = 40) {
 console.log(easyBtn.addEventListener("click", easyLevel));
 // To select the level of the sudoku game
 function easyLevel() {
-  buildBoard();
   fillBoard();
   makePuzzle(30);
+  savePuzzle();
   buildBoard();
-  // fillBoard();
 }
 
-
-
 function mediumLevel() {
-  buildBoard();
   fillBoard();
-
   makePuzzle(45);
+  savePuzzle();
   buildBoard();
-  // fillBoard();
 }
 
 mediumBtn.addEventListener("click", mediumLevel);
 
 function hardLevel() {
-  buildBoard();
   fillBoard();
   makePuzzle(60);
+  savePuzzle();
   buildBoard();
-  // fillBoard();
 }
 
 hardbtn.addEventListener("click", hardLevel);
 
 function newgame() {
-  buildBoard();
+  // to empty the loadBoard
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      loadBoard[i][j] = 0;
+    }
+  }
+  clearProgress();
   fillBoard();
   makePuzzle(40);
-  messageEl.textContent = "";
+  savePuzzle();
   buildBoard();
-  // fillBoard();
+ 
+  // to clear the p tag from local storage and from inside divTag
+  divTag.querySelectorAll("p").forEach(p => p.remove());
+  i = 0;
+  clearSteps();
 }
 
 newGameBtn.addEventListener("click", newgame);
 
+
 // get input value
 function getUserBoard() {
   let inputs = document.querySelectorAll("#board input");
-  const userBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
+  // const userBoard = Array.from({ length: 9 }, () => Array(9).fill(0));
 
   inputs.forEach((input) => {
     const r = Number(input.dataset.r);
@@ -272,9 +401,26 @@ checkBtn.addEventListener("click", checkSolution);
 
 resetBtn.addEventListener("click", () => {
   let inputs = document.querySelectorAll("#board input");
+
+  // to empty the loadBoard
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      loadBoard[i][j] = 0;
+    }
+  }
+
+  
+  divTag.querySelectorAll("p").forEach(p => p.remove());
+  i = 0;
+  clearSteps();
+
+
   inputs.forEach((input) => {
     // Only clear if it's NOT a predefined (readonly) cell
     if (!input.readOnly) {
+      clearSavedPuzzle();
+      clearProgress();
+      
       input.value = "";
     }
   });
@@ -287,16 +433,12 @@ function showAlert(message) {
 
   alertMessage.textContent = message;
   alertMessage.style.color = "red";
-  console.log(alertMessage);
+  // console.log(alertMessage);
   alertBox.style.display = "block";
 
   let okBtn = document.getElementById("alert-btn");
   okBtn.addEventListener("click", function () {
     alertBox.style.display = "none";
-    // buildBoard();
-    // fillBoard();
-    // // makePuzzle(0);
-    // buildBoard();
   });
 }
 
@@ -312,21 +454,19 @@ function showGiveUpAlert(message) {
   let okBtn = document.getElementById("alert-btn1");
   okBtn.addEventListener("click", function () {
     alertBox.style.display = "none";
-    buildBoard();
+    // buildBoard();
     fillBoard();
     makePuzzle(0);
     buildBoard();
   });
-}  
+}
 
- // give Functionality
+// give Functionality
 function giveUp() {
   showGiveUpAlert("give up!");
 }
 
 giveUpbtn.addEventListener("click", giveUp);
-
-buildBoard();
 fillBoard();
 makePuzzle();
 buildBoard();
